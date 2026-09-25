@@ -1,66 +1,56 @@
-import java.util.*;
-
 class Solution {
     public List<String> braceExpansionII(String expression) {
-        Stack<Set<String>> valst = new Stack<>();
-        Stack<String> opst = new Stack<>();
-        List<String> s = helper(expression);
-        int n = s.size();
-        
-        for (int i = 0; i < n; i++) {
-            String str = s.get(i);
-
-            if (str.equals("+") || str.equals("*") || str.equals("{")) {
+        List<String>s=helper(expression);
+        Stack<Set<String>> valst=new Stack<>();
+        Stack<String> opst=new Stack<>();
+        int n=s.size();
+        for(int i=0;i<n;i++){
+            String str=s.get(i);
+            if(str.equals("+")||str.equals("{")||str.equals("*")){
                 opst.push(str);
-            } else if (str.equals("}")) {
-                // Evaluate all '+' operations inside this brace level
-                while (!opst.isEmpty() && !opst.peek().equals("{")) {
-                    if (opst.pop().equals("+")) {
-                        Set<String> right = valst.pop();
-                        Set<String> left = valst.pop();
+            }else if(str.equals("}")){
+                while(!opst.isEmpty() && !opst.peek().equals("{") ){
+                    if(opst.pop().equals("+")){
+                        Set<String> left=valst.pop();
+                        Set<String> right=valst.pop();
                         left.addAll(right);
                         valst.push(left);
                     }
                 }
-                opst.pop(); // Pop '{'
-                
-                // Chain any pending multiplications after brace resolution
-                while (!opst.isEmpty() && opst.peek().equals("*")) {
+                opst.pop();
+                while(!opst.isEmpty() && opst.peek().equals("*")){
                     opst.pop();
-                    Set<String> right = valst.pop();
-                    Set<String> left = valst.pop();
-                    valst.push(multiply(left, right));
+                    Set<String> right=valst.pop();
+                    Set<String> left=valst.pop();
+                    valst.push(multiply(left,right));
                 }
-            } else {
-                Set<String> temp = new HashSet<>();
+            }else{
+                Set<String> temp=new HashSet<>();
                 temp.add(str);
                 valst.add(temp);
-
-                // Chain any pending multiplications immediately after a word
-                while (!opst.isEmpty() && opst.peek().equals("*")) {
+                while(!opst.isEmpty() && opst.peek().equals("*")){
                     opst.pop();
-                    Set<String> right = valst.pop();
-                    Set<String> left = valst.pop();
-                    valst.push(multiply(left, right));
+                    Set<String> left=valst.pop();
+                    Set<String> right=valst.pop();
+                    valst.push(multiply(right,left));
                 }
             }
-        }
 
-        // Final cleanup of remaining operators at root level
-        while (!opst.isEmpty()) {
-            if (opst.pop().equals("+")) {
-                Set<String> right = valst.pop();
-                Set<String> left = valst.pop();
-                left.addAll(right);
-                valst.push(left);
+        }
+        while(!opst.isEmpty()){
+            if(opst.pop().equals("+")){
+                Set<String> left=valst.pop();
+                Set<String> right=valst.pop();
+                Set<String> merge=new HashSet<>(left);
+                merge.addAll(right);
+                valst.push(merge);
             }
         }
-
-        List<String> res = new ArrayList<>(valst.pop());
+        List<String>res=new ArrayList<>(valst.pop());
         Collections.sort(res);
         return res;
-    }
 
+    }
     private static Set<String> multiply(Set<String> s1, Set<String> s2) {
         Set<String> result = new HashSet<>();
         for (String str1 : s1) {
