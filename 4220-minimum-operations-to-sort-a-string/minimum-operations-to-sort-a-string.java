@@ -1,33 +1,36 @@
 class Solution {
     public int minOperations(String s) {
-        int n=s.length();
-        if(n==1)return 0;
-        if(n==2){
-            if(s.charAt(0)>s.charAt(1))return -1;
-            return 0;
+        if(s.length()==1)return 0;
+        if(isSorted(s))return 0;
+        if(s.length()==2)return -1;
+        int min=0,max=0;
+        char minch=s.charAt(0),maxch=s.charAt(0);
+        for(int i=0;i<s.length();i++){
+            char ch=s.charAt(i);
+            if(ch>=maxch){
+                maxch=ch;
+                max=i;
+            }
+            if(ch<minch){
+                minch=ch;
+                min=i;
+            }
         }
-        char max=s.charAt(0);
-        char min=s.charAt(0);
-        for(int i=1;i<n;i++){
-            if(max<s.charAt(i))max=s.charAt(i);
-            if(min>s.charAt(i))min=s.charAt(i);
+        
+        if(min==s.length()-1 && max==0){
+            return 3;
+        }else if (min==s.length()-1 || max==0){
+            return 2;
+        }else if(min!=0 && max!=s.length()-1){
+            return 2;
         }
-        int max_idx=-1;
-        int min_idx=-1;
-        for(int i=0;i<n;i++){
-            if(s.charAt(i)==max)max_idx=i;
-        }
-        for(int i=n-1;i>=0;i--){
-            if(s.charAt(i)==min)min_idx=i;
-        }
-        if(sorted(s))return 0;
-        if(max_idx==n-1 || min_idx==0)return 1;
-        if(max_idx==0 && min_idx==n-1)return 3;
-        return 2;
+        return 1;
     }
-    static boolean sorted(String s){
+    static boolean isSorted(String s){
         for(int i=1;i<s.length();i++){
-            if(s.charAt(i)<s.charAt(i-1))return false;
+            if(s.charAt(i-1)>s.charAt(i)){
+                return false;
+            }
         }
         return true;
     }
