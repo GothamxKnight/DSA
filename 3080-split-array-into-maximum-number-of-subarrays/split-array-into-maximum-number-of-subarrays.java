@@ -7,7 +7,6 @@ class Solution {
         if(min!=0)return 1;
         Integer curr=null;
         int cnt=0;
-        int lastSubIdx=-1;
         for(int i=0;i<nums.length;i++){
             if(curr==null){
                 curr=nums[i];
@@ -16,7 +15,6 @@ class Solution {
             if(curr==0){
                 curr=null;
                 cnt++;
-                lastSubIdx=i;
             }
         }
         return cnt;
